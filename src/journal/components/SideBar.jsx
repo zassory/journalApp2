@@ -33,8 +33,8 @@ export const SideBar = ({ drawerWidth }) => {
                                 </ListItemIcon>
                                 <Grid container>
                                     <ListItemText primary={ text } />
-                                    <ListItemText secondary={ 'Ex non ex aute reprehenderit eiusmod nostrud occaecat est quis anim.' } />                                    
-                                </Grid>                                
+                                    <ListItemText secondary={ 'Ex non ex aute reprehenderit eiusmod nostrud occaecat est quis anim.' } />
+                                </Grid>                        
                             </ListItemButton>
                         </ListItem>
                     ))
