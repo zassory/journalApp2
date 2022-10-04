@@ -49,13 +49,12 @@ export const useForm = ( initialForm = {} , formValidations = {}) => {
             formCheckedValues[`${ formField }Valid`] = fn( formState[formField] ) ? null : errorMessage;
         }
 
-        setFormValidation( formCheckedValues );
-        console.log(formCheckedValues);
+        setFormValidation( formCheckedValues );        
     }
 
     return {
-        ...formState,
-        formState,
+        ...formState,//Este viene desestructurado
+        formState,//Este hay que desectructurarlo
         onInputChange,
         onResetForm,
     

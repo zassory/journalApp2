@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
-import { Button , Grid, Link ,TextField, Typography } from "@mui/material";
+import { Alert, Button , Grid, Link ,TextField, Typography } from "@mui/material";
 import { AuthLayout } from '../layout/AuthLayout';
 
 import { useForm } from '../../hooks';
+import { startCreatingUserWithEmailPassword } from '../../store/auth'; //This is my action
 
 const formData = {
   email: '',
@@ -17,9 +19,16 @@ const formValidations = {
   displayName: [(value)=> value.length >=1,'Name is required'],
 }
 
+//-------------------------------------------------
 
 export const RegisterPage = () => {
 
+  const { status , errorMessage } = useSelector( state => state.auth );
+  //memoriza SOLO cuando el status este en 'checking'<<-------
+  //Solo cambia si el status cambia ( dependencia )
+  const isCheckingAuthentication = useMemo(()=> status === 'checking',[ status ]);  
+
+  const dispatch = useDispatch();
   const [ formSubmitted,setFormSubmitted ] = useState(false);
 
   const {
@@ -31,15 +40,19 @@ export const RegisterPage = () => {
 
   const onSubmit = (event) => {
     event.preventDefault();
-    setFormSubmitted(true);
-    console.log(formState);
+    setFormSubmitted(true); //Como cambia esto ?
+    //Cambia al hacer click, ahi comienzan a trabajar las validaciones
+    //Segui la traza
+    if(!isFormValid) return;
+    //console.log('Quiero ver como es el formState',formState);
+    dispatch( startCreatingUserWithEmailPassword(formState) );//Como venia la data en el formState?
   }
 
 
   return (
     
         <AuthLayout title="Register">
-          <h1>FormValid { isFormValid ? 'Ok' : 'Not-Ok' }</h1>
+          {/* <h1>FormValid { isFormValid ? 'Ok' : 'Not-Ok' }</h1> */}
           <form onSubmit={ onSubmit }>
             <Grid container>
 
@@ -84,13 +97,25 @@ export const RegisterPage = () => {
                 />
               </Grid>{/* Fin Grid */}
               <Grid container spacing={ 2 } sx={{ mb:2, mt:1 }}>
+
+                <Grid 
+                  item 
+                  xs={ 12 }
+                  display={ !!errorMessage ? '':'none' }//Si es verdadero se muestra, si no es none
+                  >
+                  <Alert severity='error'>
+                    { errorMessage }
+                  </Alert>
+                </Grid>
+
                 <Grid item xs={ 12 }>
                   <Button
-                    type="submit"
+                    disabled={ isCheckingAuthentication } //Deshabilitado si esta haciendo la autenticacion
                     fullWidth
+                    type="submit"
                     variant='contained'
                     >
-                      Create count
+                      Create a Count
                   </Button>
                 </Grid> {/* Fin Grid */}                
               </Grid>{/* Fin Grid botones*/}

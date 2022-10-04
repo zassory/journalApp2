@@ -20,8 +20,7 @@ export const LoginPage = () => {
     password: '123456',
   });
 
-  const isAuthenticating = useMemo( () => status === 'checking', [status] );
-  console.log('Autenticacion!!!!!!!!!!!',isAuthenticating);
+  const isAuthenticating = useMemo( () => status === 'checking', [status] );  
 
   const onSubmit = ( event ) => {
     //Estan asi porque lo desestructuro de como
