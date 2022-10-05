@@ -19,7 +19,7 @@ const formValidations = {
   displayName: [(value)=> value.length >=1,'Name is required'],
 }
 
-//-------------------------------------------------
+//------------------------------------------------->
 
 export const RegisterPage = () => {
 
@@ -53,7 +53,10 @@ export const RegisterPage = () => {
     
         <AuthLayout title="Register">
           {/* <h1>FormValid { isFormValid ? 'Ok' : 'Not-Ok' }</h1> */}
-          <form onSubmit={ onSubmit }>
+          <form 
+            onSubmit={ onSubmit }
+            className='animate__animated animate__fadeIn animate__faster'
+          >
             <Grid container>
 
               <Grid item xs={ 12 } sx={{ mt:2 }}>

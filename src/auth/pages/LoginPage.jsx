@@ -1,99 +1,126 @@
 import { useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch , useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
-import { Button , Grid, Link ,TextField, Typography } from "@mui/material";
-import { Google } from "@mui/icons-material";
+import { Google } from '@mui/icons-material';
+import { 
+  Alert,
+  Button, 
+  Grid , 
+  Link, 
+  TextField , 
+  Typography 
+} from '@mui/material';
 import { AuthLayout } from '../layout/AuthLayout';
-
 import { useForm } from '../../hooks';
-import { checkingAuthentication , startGoogleSignIn } from '../../store/auth';
-
+import {         
+        startGoogleSignIn,
+        startLoginWithEmailPassword 
+      } from '../../store/auth';
 
 export const LoginPage = () => {
 
-  const { status } = useSelector( state => state.auth );
-
+  const { status , errorMessage } = useSelector( state => state.auth );
   const dispatch = useDispatch();
 
-  const {email,password,onInputChange} = useForm({
-    email: 'nicolas.programador@gmail.com',
-    password: '123456',
+  const { email , password , onInputChange } = useForm({
+    email   :'',
+    password:''
   });
 
-  const isAuthenticating = useMemo( () => status === 'checking', [status] );  
+  //Voy a memorizar el resultado del status
+  //Si cambia se obtiene un nuevo valor
+  //Si no nunca cambia
+  const isAuthenticating = useMemo(
+    () => status === 'checking',
+    [status]
+  );
 
   const onSubmit = ( event ) => {
-    //Estan asi porque lo desestructuro de como
-    //Vienen por la respuesta
-    event.preventDefault();
-    dispatch( checkingAuthentication() );
+    event.preventDefault();    
+    dispatch( startLoginWithEmailPassword({email,password}) );
   }
 
   const onGoogleSignIn = () => {
     dispatch( startGoogleSignIn() );
-    console.log('onGoogleSignIn');
   }
 
+
   return (
-    
-        <AuthLayout title="Login">
-          <form onSubmit={ onSubmit }>
+      
+        <AuthLayout title="Login" >
+          <form 
+            onSubmit={ onSubmit }
+            className='animate__animated animate__fadeIn animate__faster'
+            >
             <Grid container>
-              <Grid item xs={ 12 } sx={{ mt:2 }}>
+              <Grid item xs={ 12 } sx={{ mt: 2 }}>
                 <TextField 
-                  label="Correo"
-                  type="email"
-                  placeholder="correo@google.com"
+                  label="Correo" 
+                  type="email" 
+                  placeholder='correo@google.com'
                   fullWidth
                   name="email"
                   value={ email }
                   onChange={ onInputChange }
-
-                />
-              </Grid>{/* Fin Grid */}
-              <Grid item xs={ 12 } sx={{ mt:2 }}>
+                  />
+              </Grid>
+              <Grid item xs={ 12 } sx={{ mt: 2 }}>
                 <TextField 
-                  label="Password"
+                  label="Contraseña"
                   type="password"
-                  placeholder="Contraseña"
+                  placeholder='Contraseña'
                   fullWidth
                   name="password"
                   value={ password }
                   onChange={ onInputChange }
                 />
-              </Grid>{/* Fin Grid */}
-              <Grid container spacing={ 2 } sx={{ mb:2, mt:1 }}>
-                <Grid item xs={ 12 } sm={ 6 }>
-                  <Button 
-                    disabled={ isAuthenticating }
-                    fullWidth
-                    type="submit"
-                    variant='contained'
+              </Grid>
+
+              <Grid container spacing={ 2 } sx={{ mb: 2 , mt:1 }}>
+
+                <Grid
+                  item
+                  xs={ 12 }                  
+                  display={ !!errorMessage ? '':'none' }
+                >
+                  <Alert 
+                    severity='error'
                     >
-                      Login
-                  </Button>
-                </Grid> {/* Fin Grid */}
+                      { errorMessage }
+                    </Alert>
+                </Grid>
+
                 <Grid item xs={ 12 } sm={ 6 }>
                   <Button 
                     disabled={ isAuthenticating }
                     fullWidth
+                    type="submit" 
+                    variant='contained' 
+                    >
+                    Login
+                  </Button>
+                </Grid>
+                <Grid item xs={ 12 } sm={ 6 }>
+                  <Button 
+                    fullWidth
+                    disabled={ isAuthenticating }
                     onClick={ onGoogleSignIn }
                     variant='contained' 
                     >
                     <Google />
-                    <Typography sx={{ ml:1 }}>Google</Typography>
+                    <Typography sx={{ ml: 1 }}>Google</Typography>
                   </Button>
                 </Grid>
-              </Grid>{/* Fin Grid botones*/}
+              </Grid>
+
               <Grid container direction='row' justifyContent='end'>
                 <Link component={ RouterLink } color='inherit' to="/auth/register">
-                  Create a count
-                </Link>
+                  Crear una cuenta
+                </Link>              
               </Grid>
 
             </Grid>
-
           </form>
-        </AuthLayout>            
+        </AuthLayout>               
   )
 }
